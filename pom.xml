@@ -45,6 +45,32 @@
       <version>4.11</version>
       <scope>test</scope>
     </dependency>
+      <dependency>
+          <groupId>javax</groupId>
+          <artifactId>javaee-api</artifactId>
+          <version>7.0</version>
+          <scope>provided</scope>
+      </dependency>
+      <dependency>
+          <groupId>javax.servlet</groupId>
+          <artifactId>servlet-api</artifactId>
+          <version>2.5</version>
+          <type>jar</type>
+          <scope>provided</scope>
+      </dependency>
+      <!-- 导入java ee jar 包 -->
+      <!--<dependency>-->
+          <!--<groupId>javax</groupId>-->
+          <!--<artifactId>javaee-api</artifactId>-->
+          <!--<version>7.0</version>-->
+      <!--</dependency>-->
+
+      <!--<dependency>-->
+          <!--<groupId>javax.servlet</groupId>-->
+          <!--<artifactId>javax.servlet-api</artifactId>-->
+          <!--<version>3.1.0</version>-->
+          <!--<scope>provided</scope>-->
+      <!--</dependency>-->
 
       <!-- spring核心包 -->
       <dependency>
@@ -109,12 +135,7 @@
           <artifactId>mybatis-spring</artifactId>
           <version>1.2.2</version>
       </dependency>
-      <!-- 导入java ee jar 包 -->
-      <dependency>
-          <groupId>javax</groupId>
-          <artifactId>javaee-api</artifactId>
-          <version>7.0</version>
-      </dependency>
+
       <!-- 导入Mysql数据库链接jar包 -->
       <dependency>
           <groupId>mysql</groupId>
