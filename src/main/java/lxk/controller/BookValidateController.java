@@ -3,6 +3,7 @@ package lxk.controller;
 import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import lxk.model.Book;
 import lxk.service.BookService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;

@@ -1,4 +1,4 @@
-package lxk.controller;
+package lxk.model;
 
 import org.hibernate.validator.constraints.NotEmpty;
 

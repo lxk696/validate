@@ -1,10 +1,10 @@
-package lxk.service;
+package lxk.model;
 
 /**
  * @author 刘雄康
  * @version v1.0
- * @description book
+ * @description
  * @date 2018年12月06日
  */
-public interface BookService {
+public interface CreateGroup {
 }

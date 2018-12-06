@@ -277,6 +277,13 @@
           <scope>provided</scope>
           <!--编译测试有效生成class，运行期用不上-->
       </dependency>
+
+      <dependency>
+          <groupId>org.assertj</groupId>
+          <artifactId>assertj-core</artifactId>
+          <version>3.9.0</version>
+      </dependency>
+
   </dependencies>
 
   <build>
@@ -338,5 +345,15 @@
 
       </plugins>
     </pluginManagement>
+      <plugins>
+          <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-compiler-plugin</artifactId>
+              <configuration>
+                  <source>7</source>
+                  <target>7</target>
+              </configuration>
+          </plugin>
+      </plugins>
   </build>
 </project>
