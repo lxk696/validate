@@ -1,5 +1,9 @@
 package lxk.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.Range;
@@ -14,6 +18,10 @@ import java.util.Date;
  * @author zhumaer
  * @since 6/15/2017 2:48 PM
  */
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class User implements Serializable {
 
     private static final long serialVersionUID = 2594274431751408585L;

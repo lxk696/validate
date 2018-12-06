@@ -1,6 +1,8 @@
 package lxk.controller;
 
 
+import com.alibaba.fastjson.JSONObject;
+import lombok.val;
 import lxk.model.CreateGroup;
 import lxk.model.User;
 import lxk.service.BtUserService;
@@ -20,12 +22,15 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     @Autowired
-    private BtUserService userService;
+    private BtUserService btUserService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public User addUser(@Validated(CreateGroup.class) @RequestBody User user) {
-        return userService.insertAndReturn(user);
+        return btUserService.insertAndReturn(user);
     }
+
+
+
 
 }

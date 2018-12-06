@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import lxk.model.Book;
+import lxk.model.User;
 import lxk.service.BookService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -58,9 +59,15 @@ public class BookValidateController {
 
     @RequestMapping(value = "/bookget", method = RequestMethod.GET)
     @ResponseBody
-    public Object jkbWatch() throws InterruptedException {
+    public Object bookget() throws InterruptedException {
         val jsonObject = new JSONObject();
-        jsonObject.put("testkey", "testvalue");
+        jsonObject.put("testkey11", "testvalue11");
         return jsonObject;
     }
+    @RequestMapping(value = "/userGet", method = RequestMethod.GET)
+    @ResponseBody
+    public User userGet(User user) throws InterruptedException {
+        return user;
+    }
+
 }
