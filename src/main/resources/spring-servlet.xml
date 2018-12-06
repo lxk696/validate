@@ -6,22 +6,23 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:tx="http://www.springframework.org/schema/tx"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-        http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+        http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
         http://www.springframework.org/schema/tx
-        http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+        http://www.springframework.org/schema/tx/spring-tx-4.3.xsd
         http://www.springframework.org/schema/aop
-        http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+        http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
         http://www.springframework.org/schema/context
-        http://www.springframework.org/schema/context/spring-context-4.0.xsd
+        http://www.springframework.org/schema/context/spring-context-4.3.xsd
         http://www.springframework.org/schema/mvc
         http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
-
+    <mvc:default-servlet-handler />
 
     <!-- 1、配置映射器与适配器 -->
     <mvc:annotation-driven></mvc:annotation-driven>
+
     <!-- 自动扫描该包，使SpringMVC认为包下用了@controller注解的类是控制器 -->
-    <context:component-scan base-package="lxk.controller" />
+    <context:component-scan base-package="lxk" />
     <!--避免IE执行AJAX时，返回JSON出现下载文件 -->
     <!-- 输出对象转JSON支持   -->
     <bean id="stringConverter" class="org.springframework.http.converter.StringHttpMessageConverter">
@@ -34,9 +35,20 @@
 
     <bean id="jsonConverter"
           class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"></bean>
+
     <!-- 启动SpringMVC的注解功能，完成请求和注解POJO的映射 -->
-    <bean
-            class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+    <!--<bean-->
+            <!--class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">-->
+        <!--<property name="messageConverters">-->
+            <!--<list>-->
+                <!--<ref bean="stringConverter"/>-->
+                <!--<ref bean="jsonConverter" />-->
+            <!--</list>-->
+        <!--</property>-->
+    <!--</bean>-->
+
+    <!-- 启动Spring MVC的注解功能，完成请求和注解POJO的映射,解决@ResponseBody乱码问题 -->
+    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
         <property name="messageConverters">
             <list>
                 <ref bean="stringConverter"/>
@@ -64,16 +76,16 @@
     </bean>
 
     <!--  配置静态资源，防止被springmvc过滤 -->
-    <mvc:resources location="/" mapping="/**/*.html"/>
-    <mvc:resources location="/" mapping="/**/*.js"/>
-    <mvc:resources location="/" mapping="/**/*.css"/>
-    <mvc:resources location="/" mapping="/**/*.png"/>
-    <mvc:resources location="/" mapping="/**/*.gif"/>
-    <mvc:resources location="/" mapping="/**/*.woff"/>
-    <mvc:resources location="/" mapping="/**/*.ttf"/>
-    <mvc:resources location="/" mapping="/**/*.jpg"/>
-    <mvc:resources location="/" mapping="/**/*.mp3"/>
-    <mvc:resources location="/" mapping="/**/*.mp4"/>
+    <!--<mvc:resources location="/" mapping="/**/*.html"/>-->
+    <!--<mvc:resources location="/" mapping="/**/*.js"/>-->
+    <!--<mvc:resources location="/" mapping="/**/*.css"/>-->
+    <!--<mvc:resources location="/" mapping="/**/*.png"/>-->
+    <!--<mvc:resources location="/" mapping="/**/*.gif"/>-->
+    <!--<mvc:resources location="/" mapping="/**/*.woff"/>-->
+    <!--<mvc:resources location="/" mapping="/**/*.ttf"/>-->
+    <!--<mvc:resources location="/" mapping="/**/*.jpg"/>-->
+    <!--<mvc:resources location="/" mapping="/**/*.mp3"/>-->
+    <!--<mvc:resources location="/" mapping="/**/*.mp4"/>-->
 
 
 </beans>
