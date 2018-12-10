@@ -23,8 +23,14 @@ public class RedisClusterClient {
   public static void main(String[] args) {
       try {
           RedisClusterClient clusterInstance = RedisClusterClient.getClusterInstance();
-          System.out.println(clusterInstance.set("test2018", "2018111"));
-          System.out.println(clusterInstance.get("test2018"));
+          System.out.println("get nullkey: " + clusterInstance.get("nullkey"));
+          System.out.println("get T1:                " + clusterInstance.get("T1"));
+          System.out.println("get test2018121011111: " + clusterInstance.get("test2018121011111"));
+          //System.out.println("set test2018121011111 :" + clusterInstance.set("test2018121011111", "test2018121011111"));
+          System.out.println("get test201812101111:  " + clusterInstance.get("test201812101111"));
+          System.out.println("T1".equals("T1"));
+          System.out.println("test2018121011111".equals("test2018121011111"));
+          jedisCluster.close();
       } catch (Exception e) {
           e.printStackTrace();
       }
@@ -42,33 +48,41 @@ public class RedisClusterClient {
         }
 
         JedisPoolConfig config = new JedisPoolConfig();
-        // config.setMaxTotal(200);
-        // config.setMaxIdle(30);
-        // config.setMaxWaitMillis(10000);
-        // config.setTestOnBorrow(true);
-        // config.setTimeBetweenEvictionRunsMillis(30000);
-        // config.setMinEvictableIdleTimeMillis(1800000);
-        // config.setSoftMinEvictableIdleTimeMillis(1800000);
-
+          // 最大连接数
         config.setMaxTotal(200);
+          // 最大空闲连接数
         config.setMaxIdle(50);
-        config.setMinIdle(8); // 设置最小空闲数
-        config.setMaxWaitMillis(10000);
+          // 设置最小空闲数
+          config.setMinIdle(8);
+          //获取连接时的最大等待毫秒数,小于零:阻塞不确定的时间,默认-1
+          config.setMaxWaitMillis(3000);
+          //在获取连接的时候检查有效性, 默认false
         config.setTestOnBorrow(true);
+          //在归还给pool时，是否提前进行validate操作
         config.setTestOnReturn(true);
+          //在空闲时检查有效性, 默认false
+          config.setTestWhileIdle(true);
+          //连接耗尽时是否阻塞, false报异常,ture阻塞直到超时, 默认true
+          config.setBlockWhenExhausted(true);
+          //连接空闲多久后释放, 当空闲时间>该值 且 空闲连接>最大空闲连接数 时直接释放
+          config.setSoftMinEvictableIdleTimeMillis(100);
         // Idle时进行连接扫描
         config.setTestWhileIdle(true);
-        // 表示idle object evitor两次扫描之间要sleep的毫秒数
+          // 表示idle object evitor两次扫描之间要sleep的毫秒数----释放连接的扫描间隔（毫秒）
         config.setTimeBetweenEvictionRunsMillis(30000);
-        // 表示idle object evitor每次扫描的最多的对象数
+          // 表示idle object evitor每次扫描的最多的对象数 -----每次释放连接的最大数目
         config.setNumTestsPerEvictionRun(10);
-        // 表示一个对象至少停留在idle状态的最短时间，然后才能被idle object
-        // evitor扫描并驱逐；这一项只有在timeBetweenEvictionRunsMillis大于0时才有意义
+          // ------连接最小空闲时间
+          // 表示一个对象至少停留在idle状态的最短时间，然后才能被idle object evitor扫描并驱逐；这一项只有在timeBetweenEvictionRunsMillis大于0时才有意义
         config.setMinEvictableIdleTimeMillis(60000);
-        jedisCluster =
+
+
+          jedisCluster =
             new JedisCluster(
-                //jedisClusterNodes, 30000, 30000, 5, "baobeituan", config); // 如果为测试ip则使用密码登录
-                    jedisClusterNodes, config); // 如果为测试ip则使用密码登录
+                    //jedisClusterNodes, 3000, 3000, 5, "baobeituan", config); // 如果为测试ip则使用密码登录
+                    // jedisClusterNodes, config); // 如果为测试ip则使用密码登录
+                    jedisClusterNodes, 3000, 3000, 2, "lxk123pwd", config);
+
       } else {
         LOG.error("redisHosts is not config!");
         throw new RuntimeException("redisHosts is not config!");
@@ -83,11 +97,10 @@ public class RedisClusterClient {
       if (null == redisClient) {
         synchronized (RedisClusterClient.class) {
           if (null == redisClient) {
-            redisHosts = Arrays.asList("112.74.182.19:7371,112.74.182.19:7372,112.74.182.19:7373,112.74.182.19:7374,112.74.182.19:7375,112.74.182.19:7376".split(","));
-                //Arrays.asList(
-                  //  "39.108.244.68:6379,39.108.244.68:6380,39.108.244.68:6381,39.108.244.68:7379,39.108.244.68:7380,39.108.244.68:7381"
-                    //    .split(","));
-            initRedisCluster();
+              redisHosts =
+                      Arrays.asList("112.74.182.19:6379,112.74.182.19:6380,112.74.182.19:6381,112.74.182.19:7379,112.74.182.19:7380,112.74.182.19:7381".split(","));
+              //Arrays.asList("39.108.244.68:6379,39.108.244.68:6380,39.108.244.68:6381,39.108.244.68:7379,39.108.244.68:7380,39.108.244.68:7381".split(","));
+              initRedisCluster();
             redisClient = new RedisClusterClient();
           }
         }
@@ -169,6 +182,7 @@ public class RedisClusterClient {
     try {
       res = jedisCluster.set(key, value);
     } catch (Exception e) {;
+        LOG.error(e.getMessage(), e);
     }
     return res;
   }
@@ -235,7 +249,7 @@ public class RedisClusterClient {
       final String key, final String value, final String nxxx, final String expx, final long time) {
     String res = null;
     try {
-      res = jedisCluster.set(key, value, nxxx, expx, time);
+        //res = jedisCluster.set(key, value, nxxx, expx, time);
     } catch (Exception e) {
       LOG.error(e.getMessage(), e);
     }
@@ -271,7 +285,7 @@ public class RedisClusterClient {
     try {
       res = jedisCluster.get(key);
     } catch (Exception e) {
-      LOG.error(e.getMessage() + "jedisCluster : " + jedisCluster + " , key  :" + key, e);
+        //LOG.error(e.getMessage() + "jedisCluster : " + jedisCluster + " , key  :" + key, e);
     }
     return res;
   }

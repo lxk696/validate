@@ -15,19 +15,20 @@ public class RedissonManager {
 
         try {
             config.useClusterServers() //这是用的集群server
-                    .setScanInterval(2000) //设置集群状态扫描时间
-                    .setMasterConnectionPoolSize(10000) //设置连接数
-                    .setSlaveConnectionPoolSize(10000)
+                    .setScanInterval(20000) //设置集群状态扫描时间
+                    .setMasterConnectionPoolSize(1000) //设置连接数
+                    .setSlaveConnectionPoolSize(1000)
                     // .setPassword("baobeituan")
-                    // .addNodeAddress("http://39.108.244.68:6379","http://39.108.244.68:6380","http://39.108.244.68:6381","http://39.108.244.68:7379","http://39.108.244.68:7380","http://39.108.244.68:7381");
-                   //.addNodeAddress("http://112.74.182.19:7371","http://112.74.182.19:7372","http://112.74.182.19:7373","http://112.74.182.19:7374","http://112.74.182.19:7375","http://112.74.182.19:7376");
-                    .addNodeAddress("http://112.74.182.19:7371","http://112.74.182.19:7372","http://112.74.182.19:7373");
+                    // .addNodeAddress("http://39.108.244.68:6379", "http://39.108.244.68:6380", "http://39.108.244.68:6381", "http://39.108.244.68:7379", "http://39.108.244.68:7380", "http://39.108.244.68:7381");
+                    .setPassword("lxk123pwd")
+                    .addNodeAddress("http://112.74.182.19:6379", "http://112.74.182.19:6380", "http://112.74.182.19:6381", "http://112.74.182.19:7379", "http://112.74.182.19:7380", "http://112.74.182.19:7381");
         redisson = (Redisson) Redisson.create(config);
             //清空自增的ID数字
             RAtomicLong atomicLong = redisson.getAtomicLong(RAtomicName);
             atomicLong.set(1);
         }catch (Exception e){
             e.printStackTrace();
+            throw e;
         }
     }
 

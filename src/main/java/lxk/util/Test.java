@@ -10,7 +10,7 @@ public class Test {
     public static void main(String[] args) {
         RedissonManager.init(); //初始化
 
-        //testConcurrentThreadGetLock();
+        testConcurrentThreadGetLock();
 
 
     }
