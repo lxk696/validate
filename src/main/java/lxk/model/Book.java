@@ -9,6 +9,15 @@ public class Book {
 
     private long id;
 
+    public Book() {
+        
+    }
+
+    public Book(long id) {
+        this.id = id;
+    }
+
+
     /**
      * 书名
      */

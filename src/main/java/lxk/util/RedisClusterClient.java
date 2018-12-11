@@ -277,7 +277,7 @@ public class RedisClusterClient {
       res = jedisCluster.expire(key, seconds);
     } catch (Exception e) {;
     }
-    return res;
+      return res;
   }
 
   public String get(final String key) {
