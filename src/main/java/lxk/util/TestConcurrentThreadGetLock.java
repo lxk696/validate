@@ -17,7 +17,7 @@ import java.util.concurrent.Future;
  * @description Test
  * @date 2018年12月05日
  */
-public class Test {
+public class TestConcurrentThreadGetLock {
 
     public static void main(String[] args) {
         try {
