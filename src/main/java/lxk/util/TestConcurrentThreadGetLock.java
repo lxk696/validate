@@ -20,17 +20,23 @@ import java.util.concurrent.Future;
 public class TestConcurrentThreadGetLock {
 
     public static void main(String[] args) {
+
+        Redisson redisson =null;
         try {
             RedissonManager.init(); //初始化
-            Redisson redisson = RedissonManager.getRedisson();
+            redisson = RedissonManager.getRedisson();
             //testConcurrentThreadGetLock();
             //testList(redisson);
-            //testAnyBody(redisson);
-            testMap(redisson);
+            testAnyBody(redisson);
+            //testAnyBodyStr(redisson);
+            //testMap(redisson);
 
-            redisson.shutdown();
         } catch (Exception e) {
             e.printStackTrace();
+        }finally {
+            if (null!=redisson){
+                redisson.shutdown();
+            }
         }
     }
 
@@ -57,11 +63,24 @@ public class TestConcurrentThreadGetLock {
     }
 
     private static void testAnyBody(Redisson redisson) {
+        System.out.println("-------------testAnyBody----------");
         RBucket<Book> bucket = redisson.getBucket("anyObject");
         System.out.println(bucket.get());
         System.out.println(bucket.trySet(new Book(3)));
         System.out.println(bucket.compareAndSet(new Book(4), new Book(5)));
         System.out.println(bucket.getAndSet(new Book(new Random().nextInt(100))));
+    }
+
+    private static void testAnyBodyStr(Redisson redisson) {
+        System.out.println("-------------testAnyBodyStr----------");
+        RBucket<String> bucket = redisson.getBucket("anyObjecStr");
+        System.out.println(bucket.get());
+        System.out.println(bucket.trySet("anyObjecStr2222"));
+        System.out.println(bucket.delete());
+        System.out.println(bucket.get());
+
+        //RBucket<String> bucket2 = redisson.getBucket("anyObjecStr");
+        //System.out.println(bucket2.get());
     }
 
     private static void testList(Redisson redisson) {
