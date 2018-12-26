@@ -8,7 +8,6 @@ import org.redisson.api.RFuture;
 import org.redisson.api.RMap;
 
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.Future;
 
 /**
@@ -41,6 +40,7 @@ public class TestConcurrentThreadGetLock {
     }
 
     private static void testMap(Redisson redisson) throws InterruptedException, java.util.concurrent.ExecutionException {
+        System.out.println("---------------testMap--------------------");
         RMap<String, Book> map = redisson.getMap("anyMap");
         System.out.println("1" + JSON.toJSON(map));
 
@@ -67,8 +67,11 @@ public class TestConcurrentThreadGetLock {
         RBucket<Book> bucket = redisson.getBucket("anyObject");
         System.out.println(bucket.get());
         System.out.println(bucket.trySet(new Book(3)));
-        System.out.println(bucket.compareAndSet(new Book(4), new Book(5)));
-        System.out.println(bucket.getAndSet(new Book(new Random().nextInt(100))));
+        System.out.println(bucket.compareAndSet(new Book(3), new Book(5)));
+        System.out.println(bucket.getAndSet(new Book(11)));
+        System.out.println(bucket.get());
+        System.out.println(bucket.delete());
+        System.out.println(bucket.get());
     }
 
     private static void testAnyBodyStr(Redisson redisson) {
@@ -84,6 +87,7 @@ public class TestConcurrentThreadGetLock {
     }
 
     private static void testList(Redisson redisson) {
+        System.out.println("---------------testList--------------------");
         List<Integer> list = redisson.getList("list");
         list.add(1);
         list.add(2);
@@ -91,7 +95,7 @@ public class TestConcurrentThreadGetLock {
         list.add(4);
 
         System.out.println("list:" + redisson.getList("list"));
-        System.out.println("-----------------------------------");
+
     }
 
     private static void testConcurrentThreadGetLock() {
