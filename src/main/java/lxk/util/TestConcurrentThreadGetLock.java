@@ -10,7 +10,7 @@ import org.redisson.api.RMap;
 import java.util.List;
 import java.util.concurrent.Future;
 
-/**
+/**@link https://www.cnblogs.com/tietazhan/p/6307304.html
  * @author 刘雄康
  * @version v1.0
  * @description Test
