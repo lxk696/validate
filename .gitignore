@@ -21,6 +21,7 @@ build/
 nbbuild/
 dist/
 nbdist/
+/logs/
 .nb-gradle/
 *.settings
 *.classpath
