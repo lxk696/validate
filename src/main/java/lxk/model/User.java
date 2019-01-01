@@ -133,7 +133,4 @@ public class User implements Serializable {
 
     }
 
-
-    //省略getter、setter方法（这里你可以引入lombok来简化类的getter、setter）。
-
 }
