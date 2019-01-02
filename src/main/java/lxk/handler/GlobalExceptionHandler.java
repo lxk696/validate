@@ -1,10 +1,7 @@
 package lxk.handler;
 
 import com.alibaba.fastjson.JSON;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.validator.internal.engine.path.NodeImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,31 +102,23 @@ public class GlobalExceptionHandler {
             ConstraintViolation<?> next = iterator.next();
             Iterator<Path.Node> nodeIterator = next.getPropertyPath().iterator();
             Integer paramIndex = 0;
+            String methodName = "";
+            List<Class<?>> parameterTypes = null;
+            int i = 0;
             while (nodeIterator.hasNext()) {
-                // if (++paramIndex == 1) {
-
                 Path.Node node = nodeIterator.next();
-                try {
-                    LOGGER.info(JSON.toJSONString(node));
-                } catch (Exception e1) {
-                    e1.printStackTrace();
-                }
-
-                node.getName();
-                try {
+                if (i == 0) {
+                    methodName = node.getName();
+                    parameterTypes = ((NodeImpl) node).getParameterTypes();
+                } else if (i == 1) {
                     paramIndex = ((NodeImpl) node).getParameterIndex();
-                } catch (Exception e1) {
-                    e1.printStackTrace();
                 }
-
-                // break;
-                // }
+                i++;
             }
 
             Object invalidValue = next.getInvalidValue();
             String message = next.getMessage();
-
-            String[] paramNames = getParamNames(next.getLeafBean().getClass(), "", getParamNamesType(next.getExecutableParameters()));
+            String[] paramNames = getParamNames(next.getLeafBean().getClass(), methodName, parameterTypes.toArray(new Class<?>[parameterTypes.size()]));
             String theParameName = paramNames[paramIndex];
             LOGGER.info(
                     "Error field:{}, Error message:{}, Error value:{}", theParameName, message, invalidValue);
