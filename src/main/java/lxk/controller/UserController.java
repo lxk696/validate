@@ -13,6 +13,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Pattern;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -31,9 +33,10 @@ public class UserController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping("/add")
-    public User addUser(@Validated(CreateGroup.class) @RequestBody User user) {
-        String testEmail = "69671710@qq.com";
-        Date testDate = new Date();
+    public User addUser(@Validated(CreateGroup.class) @RequestBody User user) throws ParseException {
+        String testEmail = "69671710";
+        //Date testDate = new Date();
+        Date testDate = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss").parse("2019-02-02 23:20:20");
         Integer testRange = 100;
         return btUserService.insertAndReturn(user, testEmail, testDate, testRange);
     }
