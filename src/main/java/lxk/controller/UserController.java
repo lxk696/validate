@@ -13,6 +13,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Pattern;
+import java.util.Date;
 
 /**
  * @desc 用户管理控制器
@@ -30,9 +31,11 @@ public class UserController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping("/add")
-    public User addUser(@Validated(CreateGroup.class) @RequestBody User user
-    ) {
-        return btUserService.insertAndReturn(user);
+    public User addUser(@Validated(CreateGroup.class) @RequestBody User user) {
+        String testEmail = "69671710@qq.com";
+        Date testDate = new Date();
+        Integer testRange = 100;
+        return btUserService.insertAndReturn(user, testEmail, testDate, testRange);
     }
 
     @PostMapping
@@ -41,7 +44,10 @@ public class UserController {
     public User selectUser(@Validated(CreateGroup.class) @RequestBody User user,
                            @Length(min = 2) @RequestParam String id,
                            @Pattern(regexp = "^1[3-9]\\d{9}$", message = "{custom.phone.invalid}", groups = CreateGroup.class) @RequestParam String mobile) {
-        return btUserService.insertAndReturn(user);
+        String testEmail = "69671710@qq.com";
+        Date testDate = new Date();
+        Integer testRange = 100;
+        return btUserService.insertAndReturn(user, testEmail, testDate, testRange);
     }
 
 

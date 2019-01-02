@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:aop="http://www.springframework.org/schema/aop"
        xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:tx="http://www.springframework.org/schema/tx"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
-        http://www.springframework.org/schema/tx
-        http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
-        http://www.springframework.org/schema/aop
-        http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+
+
+
+
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context-4.0.xsd">
     <!-- 自动扫描 -->
@@ -57,4 +55,31 @@
         <property name="dataSource" ref="dataSource" />
     </bean>
 
+
+    <!--问题描述: 在接口应用MethodValidationPostProcessor和Spring注解式事务后发现： 验证参数之前就先开启了事务(获得了DB连接)，应该先验证输入，验证失败后直接抛出异常，验证成功再开启事务，这样对业务层的性能才更好。-->
+    <!--第一种解决方式：-->
+    <!--可以修改它们的order来完成；不能使用tx:ann…… 注册 ，手工注册相应的bean指定order即可.如果使用注解bean就懵逼了.还好Spring 4.2 利用@Order控制配置类的加载顺序.可以参考如下:http://wiselyman.iteye.com/blog/2217192-->
+    <!--&lt;!&ndash; 这个标签上可以写order，默认是Integer.MAX_VALUE &ndash;&gt;-->
+    <!--<tx:annotation-driven transaction-manager="transactionManager" />-->
+    <!--&lt;!&ndash; 其他配置项配置 &ndash;&gt;-->
+    <!--<bean id="validator" class="com.gmail.dohongdayi.ssh.common.validation.ValidatorFactoryBean">-->
+    <!--<property name="providerClass" value="org.hibernate.validator.HibernateValidator" />-->
+    <!--&lt;!&ndash; 如果不加默认到 使用classpath下的 ValidationMessages.properties-->
+    <!--<property name="validationMessageSource" ref="messageSource" /> &ndash;&gt;-->
+    <!--</bean>-->
+    <!--&lt;!&ndash; 定义切入点 &ndash;&gt;-->
+    <!--<bean id="validationPointcut" class="org.springframework.aop.support.annotation.AnnotationMatchingPointcut">-->
+    <!--<constructor-arg index="0" value="org.springframework.validation.annotation.Validated" />-->
+    <!--<constructor-arg index="1" value="true" />-->
+    <!--</bean>-->
+    <!--&lt;!&ndash;  定义通知&ndash;&gt;-->
+    <!--<bean id="validationAdvice" class="org.springframework.validation.beanvalidation.MethodValidationInterceptor">-->
+    <!--<constructor-arg index="0" ref="validator" />-->
+    <!--</bean>-->
+
+    <!--&lt;!&ndash; 替代MethodValidationPostProcessor，让验证切面的advisor加入到Spring AOP的AspectJAwareAdvisorAutoProxyCreator的advised &ndash;&gt;-->
+    <!--<aop:config>-->
+    <!--&lt;!&ndash; 通过order指定验证优先于事务(100 < Integer.MAX_VALUE) &ndash;&gt;-->
+    <!--<aop:advisor pointcut-ref="validationPointcut" advice-ref="validationAdvice" order="100" />-->
+    <!--</aop:config>-->
 </beans>
