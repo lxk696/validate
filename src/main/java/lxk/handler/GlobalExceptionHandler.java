@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.validator.internal.engine.path.NodeImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
+import org.springframework.core.ParameterNameDiscoverer;
 import org.springframework.http.MediaType;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -20,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Path;
+import java.lang.reflect.Method;
 import java.nio.charset.Charset;
 import java.util.*;
 
@@ -33,7 +36,6 @@ import java.util.*;
 public class GlobalExceptionHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GlobalExceptionHandler.class);
-
 
     // @ResponseStatus(HttpStatus.BAD_REQUEST)
     // @ExceptionHandler(Exception.class)ConstraintViolationException
@@ -92,7 +94,11 @@ public class GlobalExceptionHandler {
             // 获得返回值 next.getExecutableReturnValue()
 
             LOGGER.info(
-                    "Error class:{},Error field:{}, Error message:{}, Error value:{}", next.getLeafBean().getClass().getName(), next.getExecutableParameters(), next.getMessage(), next.getInvalidValue());
+                    "Error class:{},Error field:{}, Error message:{}, Error value:{}",
+                    next.getLeafBean().getClass().getName(),
+                    next.getExecutableParameters(),
+                    next.getMessage(),
+                    next.getInvalidValue());
         }
 
         while (iterator.hasNext()) {
@@ -108,6 +114,8 @@ public class GlobalExceptionHandler {
                 } catch (Exception e1) {
                     e1.printStackTrace();
                 }
+
+                node.getName();
                 try {
                     paramIndex = ((NodeImpl) node).getParameterIndex();
                 } catch (Exception e1) {
@@ -117,16 +125,45 @@ public class GlobalExceptionHandler {
                 // break;
                 // }
             }
+
             Object invalidValue = next.getInvalidValue();
             String message = next.getMessage();
-            String parameter = (String) next.getExecutableParameters()[paramIndex];
+
+            String[] paramNames = getParamNames(next.getLeafBean().getClass(), "", getParamNamesType(next.getExecutableParameters()));
+            String theParameName = paramNames[paramIndex];
             LOGGER.info(
-                    "Error field:{}, Error message:{}, Error value:{}", parameter, message, invalidValue);
+                    "Error field:{}, Error message:{}, Error value:{}", theParameName, message, invalidValue);
             errorFilds.add(
-                    ErrorFild.builder().field(parameter).message(message).value(invalidValue).build());
+                    ErrorFild.builder().field(theParameName).message(message).value(invalidValue).build());
         }
 
         return errorFilds;
+    }
+
+    public String[] getParamNames(Class<?> clazz, String methodName, Class<?>[] parameTypes) {
+        try {
+            Method method = clazz.getMethod(methodName, parameTypes);
+            ParameterNameDiscoverer pnd = new LocalVariableTableParameterNameDiscoverer();
+            String[] paramNames = pnd.getParameterNames(method);
+            System.out.println(Arrays.toString(paramNames));
+            return paramNames;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public Class<?>[] getParamNamesType(Object[] parames) {
+        try {
+            Class<?>[] paramsTypes = new Class<?>[parames.length];
+            for (int i = 0; i < parames.length; i++) {
+                paramsTypes[i] = parames.getClass();
+            }
+            return paramsTypes;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Data
