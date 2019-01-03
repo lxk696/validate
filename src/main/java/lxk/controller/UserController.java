@@ -4,6 +4,7 @@ package lxk.controller;
 import com.alibaba.fastjson.JSONObject;
 import lombok.val;
 import lxk.model.CreateGroup;
+import lxk.model.SequenceGroup;
 import lxk.model.User;
 import lxk.service.BtUserService;
 import org.hibernate.validator.constraints.Length;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Pattern;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -30,14 +30,23 @@ public class UserController {
     @Autowired
     private BtUserService btUserService;
 
+    /**@Validated({CreateGroup.class,SequenceGroup.class}
+     *   校验顺序和  SequenceGroup  与 CreateGroup的顺序无关。
+     *   此时仍然是SequenceGroup 里的first优先
+     *   此时不会校验user里没有groups分组的字段(除非CreateGroup extends Default)，没加分组的字段默认是Default分组
+     *
+    */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping("/add")
-    public User addUser(@Validated(CreateGroup.class) @RequestBody User user) throws ParseException {
-        String testEmail = "69671710";
-        //Date testDate = new Date();
-        Date testDate = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss").parse("2019-02-02 23:20:20");
-        Integer testRange = 100;
+    public User addUser(@Validated({CreateGroup.class, SequenceGroup.class})  @RequestBody User user) throws ParseException {
+        String testEmail = "69671710@qq.com";
+        Date testDate = new Date();
+        Integer testRange = 10;
+
+        // String testEmail = "69671710";
+        // Date testDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2029-02-02 23:20:20");
+        // Integer testRange = 100;
         return btUserService.insertAndReturn(user, testEmail, testDate, testRange);
     }
 

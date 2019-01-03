@@ -1,7 +1,9 @@
 package lxk.handler;
 
-import com.alibaba.fastjson.JSON;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.validator.internal.engine.path.NodeImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +16,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.HandlerMapping;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -37,8 +38,7 @@ public class GlobalExceptionHandler {
     // @ResponseStatus(HttpStatus.BAD_REQUEST)
     // @ExceptionHandler(Exception.class)ConstraintViolationException
     @ExceptionHandler({MethodArgumentNotValidException.class})
-    public Object handleMethodArgumentNotValidException(
-            MethodArgumentNotValidException e, HttpServletRequest request) {
+    public Object handleMethodArgumentNotValidException(MethodArgumentNotValidException e, HttpServletRequest request) {
         Set<MediaType> mediaTypeSet = new HashSet<>();
         MediaType mediaType = new MediaType("application", "json", Charset.forName("utf-8"));
         mediaTypeSet.add(mediaType);
@@ -52,24 +52,14 @@ public class GlobalExceptionHandler {
         List<FieldError> fieldErrorList = e.getBindingResult().getFieldErrors();
         List<ErrorFild> errorFilds = new ArrayList<>();
         for (FieldError fieldError : fieldErrorList) {
-            LOGGER.info(
-                    "Error field:{}, Error message:{}, Error value:{}",
-                    fieldError.getField(),
-                    fieldError.getDefaultMessage(),
-                    fieldError.getRejectedValue());
-            errorFilds.add(
-                    ErrorFild.builder()
-                            .field(fieldError.getField())
-                            .message(fieldError.getDefaultMessage())
-                            .value(fieldError.getRejectedValue())
-                            .build());
+            LOGGER.info("Error field:{}, Error message:{}, Error value:{}", fieldError.getField(), fieldError.getDefaultMessage(), fieldError.getRejectedValue());
+            errorFilds.add(ErrorFild.builder().field(fieldError.getField()).message(fieldError.getDefaultMessage()).value(fieldError.getRejectedValue()).build());
         }
         return errorFilds;
     }
 
     @ExceptionHandler({ConstraintViolationException.class})
-    public Object handleMethodArgumentNotValidException2(
-            ConstraintViolationException e, HttpServletRequest request) {
+    public Object handleMethodArgumentNotValidException2(ConstraintViolationException e, HttpServletRequest request) {
 
         Set<MediaType> mediaTypeSet = new HashSet<>();
         MediaType mediaType = new MediaType("application", "json", Charset.forName("utf-8"));
@@ -84,25 +74,12 @@ public class GlobalExceptionHandler {
         // e.getConstraintViolations()
         List<ErrorFild> errorFilds = new ArrayList<>();
         Iterator<ConstraintViolation<?>> iterator = e.getConstraintViolations().iterator();
-        for (ConstraintViolation<?> next : e.getConstraintViolations()) {
-            // 获得验证失败的类 next.getLeafBean()
-            // 获得验证失败的值 next.getInvalidValue()
-            // 获取参数值 next.getExecutableParameters()
-            // 获得返回值 next.getExecutableReturnValue()
-
-            LOGGER.info(
-                    "Error class:{},Error field:{}, Error message:{}, Error value:{}",
-                    next.getLeafBean().getClass().getName(),
-                    next.getExecutableParameters(),
-                    next.getMessage(),
-                    next.getInvalidValue());
-        }
-
         while (iterator.hasNext()) {
             ConstraintViolation<?> next = iterator.next();
             Iterator<Path.Node> nodeIterator = next.getPropertyPath().iterator();
             Integer paramIndex = 0;
             String methodName = "";
+            String kindName = "";
             List<Class<?>> parameterTypes = null;
             int i = 0;
             while (nodeIterator.hasNext()) {
@@ -111,19 +88,25 @@ public class GlobalExceptionHandler {
                     methodName = node.getName();
                     parameterTypes = ((NodeImpl) node).getParameterTypes();
                 } else if (i == 1) {
-                    paramIndex = ((NodeImpl) node).getParameterIndex();
+                    kindName = node.getKind().name();
+                    if ("PARAMETER".equals(kindName)) {
+                        paramIndex = ((NodeImpl) node).getParameterIndex();
+                    }
                 }
                 i++;
             }
 
             Object invalidValue = next.getInvalidValue();
             String message = next.getMessage();
-            String[] paramNames = getParamNames(next.getLeafBean().getClass(), methodName, parameterTypes.toArray(new Class<?>[parameterTypes.size()]));
-            String theParameName = paramNames[paramIndex];
-            LOGGER.info(
-                    "Error field:{}, Error message:{}, Error value:{}", theParameName, message, invalidValue);
-            errorFilds.add(
-                    ErrorFild.builder().field(theParameName).message(message).value(invalidValue).build());
+            if ("PARAMETER".equals(kindName)) {
+                String[] paramNames = getParamNames(next.getLeafBean().getClass(), methodName, parameterTypes.toArray(new Class<?>[parameterTypes.size()]));
+                String theParameName = paramNames[paramIndex];
+                LOGGER.info("Error field:{}, Error message:{}, Error value:{}", theParameName, message, invalidValue);
+                errorFilds.add(ErrorFild.builder().field(theParameName).message(message).value(invalidValue).build());
+            } else {
+                LOGGER.info("Error method:{}, Error message:{}, Error value:{}", methodName, message, invalidValue);
+                errorFilds.add(ErrorFild.builder().message(methodName + " 方法返回值异常，" + message).value(invalidValue).build());
+            }
         }
 
         return errorFilds;
@@ -134,7 +117,6 @@ public class GlobalExceptionHandler {
             Method method = clazz.getMethod(methodName, parameTypes);
             ParameterNameDiscoverer pnd = new LocalVariableTableParameterNameDiscoverer();
             String[] paramNames = pnd.getParameterNames(method);
-            System.out.println(Arrays.toString(paramNames));
             return paramNames;
         } catch (Exception e) {
             e.printStackTrace();
@@ -160,8 +142,11 @@ public class GlobalExceptionHandler {
     @AllArgsConstructor
     @Builder
     static class ErrorFild {
+
         String field;
+
         String message;
+
         Object value;
     }
 }

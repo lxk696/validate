@@ -35,15 +35,21 @@ public class User implements Serializable {
      * 登录密码
      */
     @NotBlank
-    @Pattern(regexp = "^[a-zA-Z][a-zA-Z0-9_-]{5,19}$", groups = CreateGroup.class, message = "{custom.pwd.invalid}")
+    @Pattern(regexp = "^[a-zA-Z][a-zA-Z0-9_-]{5,19}$", message = "{custom.pwd.invalid}")
     private String pwd;
 
     /**
      * 昵称
      */
-    @NotBlank
-    @Length(min = 1, max = 64, groups = CreateGroup.class)
+    @Length(min = 5, max = 20, message = "用户名长度必须在5到20之间", groups = {First.class})
+    @Pattern(regexp = "[a-zA-Z]{1,6}", message = "用户名长度必须在1到20之间的字母", groups = {Second.class,CreateGroup.class})
+    @NotBlank(groups = {Second.class, CreateGroup.class})
     private String nickname;
+    /**
+     * 电话
+     */
+    @Pattern(regexp = "^1[3-9]\\d{9}$", message = "{custom.phone.invalid}", groups = CreateGroup.class)
+    private String phone;
 
     /**
      * 头像
@@ -51,11 +57,7 @@ public class User implements Serializable {
     @Length(min = 0, max = 256, groups = CreateGroup.class)
     private String img;
 
-    /**
-     * 电话
-     */
-    @Pattern(regexp = "^1[3-9]\\d{9}$", message = "{custom.phone.invalid}", groups = CreateGroup.class)
-    private String phone;
+
 
     /**
      * 性别 {@link} 0 男 1 女
@@ -97,11 +99,10 @@ public class User implements Serializable {
      * @since 6/15/2017 2:48 PM
      */
     public enum StatusEnum {
-        NORMAL(0, "正常"),
-        SUSPENDED(1, "停用"),
-        DELETED(2, "已删除");
+        NORMAL(0, "正常"), SUSPENDED(1, "停用"), DELETED(2, "已删除");
 
         private Integer code;
+
         private String desc;
 
         StatusEnum(Integer code, String desc) {
