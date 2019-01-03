@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Path;
+import javax.validation.Payload;
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
 import java.util.*;
@@ -58,6 +59,21 @@ public class GlobalExceptionHandler {
         return errorFilds;
     }
 
+    private static void processError(ConstraintViolation<?> violation) {
+        Set<Class<? extends Payload>> payload = violation.getConstraintDescriptor().getPayload();
+
+        payload.forEach(p -> {
+            if (AppErrorHandler.class.isAssignableFrom(p)) {
+                try {
+                    AppErrorHandler errorHandler = (AppErrorHandler) p.newInstance();
+                    errorHandler.onError(violation);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
     @ExceptionHandler({ConstraintViolationException.class})
     public Object handleMethodArgumentNotValidException2(ConstraintViolationException e, HttpServletRequest request) {
 
@@ -72,6 +88,30 @@ public class GlobalExceptionHandler {
         //         e);
         // e.getConstraintViolations().iterator().next().getPropertyPath().iterator()
         // e.getConstraintViolations()
+        //Set<ConstraintViolation<TestBean>> constraintViolations =
+        Set<ConstraintViolation<?>> constraintViolations = e.getConstraintViolations();
+
+
+        boolean severeError = false;
+
+        if (constraintViolations.size() > 0) {
+            constraintViolations.stream().forEach(GlobalExceptionHandler::processError);
+
+            for (ConstraintViolation<?> violation : constraintViolations) {
+                Set<Class<? extends Payload>> payloads = violation.getConstraintDescriptor().getPayload();
+                for (Class<? extends Payload> payload : payloads) {
+                    if (payload == Severity.Error.class) {
+                        severeError = true;
+                        System.out.println("Error: " + violation.getPropertyPath() + " " + violation.getMessage());
+                    } else if (payload == Severity.Info.class) {
+                        System.out.println("Info: " + violation.getPropertyPath() + " " + violation.getMessage());
+                    }
+                }
+            }
+        }
+
+
+
         List<ErrorFild> errorFilds = new ArrayList<>();
         Iterator<ConstraintViolation<?>> iterator = e.getConstraintViolations().iterator();
         while (iterator.hasNext()) {
