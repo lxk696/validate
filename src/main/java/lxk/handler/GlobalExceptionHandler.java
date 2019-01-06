@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.HandlerMapping;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -51,6 +52,7 @@ public class GlobalExceptionHandler {
         //         e);
 
         List<FieldError> fieldErrorList = e.getBindingResult().getFieldErrors();
+        //String defaultMessage = e.getBindingResult().getGlobalErrors().iterator().next().getDefaultMessage();
         List<ErrorFild> errorFilds = new ArrayList<>();
         for (FieldError fieldError : fieldErrorList) {
             LOGGER.info("Error field:{}, Error message:{}, Error value:{}", fieldError.getField(), fieldError.getDefaultMessage(), fieldError.getRejectedValue());
@@ -58,6 +60,7 @@ public class GlobalExceptionHandler {
         }
         return errorFilds;
     }
+
 
     private static void processError(ConstraintViolation<?> violation) {
         Set<Class<? extends Payload>> payload = violation.getConstraintDescriptor().getPayload();
@@ -102,9 +105,9 @@ public class GlobalExceptionHandler {
                 for (Class<? extends Payload> payload : payloads) {
                     if (payload == Severity.Error.class) {
                         severeError = true;
-                        System.out.println("Error: " + violation.getPropertyPath() + " " + violation.getMessage());
+                        System.out.println("Payload Error: " + violation.getPropertyPath() + " " + violation.getMessage());
                     } else if (payload == Severity.Info.class) {
-                        System.out.println("Info: " + violation.getPropertyPath() + " " + violation.getMessage());
+                        System.out.println("Payload Info: " + violation.getPropertyPath() + " " + violation.getMessage());
                     }
                 }
             }

@@ -8,6 +8,7 @@ import javax.validation.GroupSequence;
  * @description
  * @date 2018年12月06日
  */
-@GroupSequence({First.class, Second.class, User.class})
+//@GroupSequence({First.class, Second.class, User.class})
+@GroupSequence({First.class, Second.class})
 public interface SequenceGroup {
 }

@@ -3,9 +3,7 @@ package lxk.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import lombok.val;
-import lxk.model.CreateGroup;
-import lxk.model.SequenceGroup;
-import lxk.model.User;
+import lxk.model.*;
 import lxk.service.BtUserService;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +37,8 @@ public class UserController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping("/add")
-    public User addUser(@Validated({CreateGroup.class, SequenceGroup.class})  @RequestBody User user) throws ParseException {
+    public User addUser(@Validated({CreateGroup.class, SequenceGroup.class}) @RequestBody User user) throws ParseException {
+    //public User addUser(@Validated({CreateGroup.class}) @RequestBody User user) throws ParseException {
         String testEmail = "69671710@qq.com";
         Date testDate = new Date();
         Integer testRange = 10;

@@ -14,7 +14,7 @@ import java.time.LocalDate;
 import static java.lang.annotation.ElementType.CONSTRUCTOR;
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
-/**@URL http://www.leftso.com/blog/390.html
+/**@link http://www.leftso.com/blog/390.html
  * @Description:   交叉  参数   约束  开始时间--结束时间  End date must be after begin date and both must be in the future
  * @Author: lxk 
  * @Date: 2019/1/3 22:42
