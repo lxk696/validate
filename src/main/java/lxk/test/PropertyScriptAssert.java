@@ -1,5 +1,6 @@
 package lxk.test;
 
+import org.hibernate.validator.internal.constraintvalidators.hv.ScriptAssertContext;
 import org.hibernate.validator.internal.util.Contracts;
 import org.hibernate.validator.internal.util.logging.Log;
 import org.hibernate.validator.internal.util.logging.LoggerFactory;
@@ -11,8 +12,6 @@ import javax.validation.*;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
-import java.util.HashMap;
-import java.util.Map;
 
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
@@ -60,6 +59,8 @@ public @interface PropertyScriptAssert {
 
         private String message;
 
+        private ScriptAssertContext scriptAssertContext;
+
         @Override
         public void initialize(PropertyScriptAssert constraintAnnotation) {
             validateParameters(constraintAnnotation);
@@ -69,6 +70,7 @@ public @interface PropertyScriptAssert {
             this.alias = constraintAnnotation.alias();
             this.property = constraintAnnotation.property();
             this.message = constraintAnnotation.message();
+            this.scriptAssertContext = new ScriptAssertContext( constraintAnnotation.lang(), constraintAnnotation.script() );
         }
 
         @Override
@@ -86,16 +88,8 @@ public @interface PropertyScriptAssert {
 
             try {
                 //evaluationResult = scriptEvaluator.evaluate(script, value, alias);
-                Map<String, Object> bindings = new HashMap<>(16);
-                bindings.put("script",script);
-                bindings.put("value",value);
-                bindings.put("alias",alias);
-                bindings.put("languageName",languageName);
-                bindings.put("property",property);
-                bindings.put("message",message);
-                evaluationResult = scriptEvaluator.evaluate(script, bindings);
-
-            } catch (ScriptException e) {
+                evaluationResult = scriptAssertContext.evaluateScriptAssertExpression( value, alias );
+            } catch (Exception e) {
                 throw log.getErrorDuringScriptExecutionException(script, e);
             }
 

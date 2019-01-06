@@ -9,7 +9,7 @@ import lxk.handler.Severity;
 import lxk.test.AuthValidation;
 import lxk.test.ConsistentDateParameters;
 import lxk.test.Forbidden;
-import lxk.test.PropertyScriptAssert2;
+import lxk.test.PropertyScriptAssert;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.Range;
@@ -39,7 +39,7 @@ import java.util.List;
 //})
 //@CheckPassword()
 //@ScriptAssert(script = "_this.pwd==_this.confirmation", lang = "javascript", alias = "_this", message = "{password.confirmation.error}")//TODO 这样全局异常捕获不到错误字段
-@PropertyScriptAssert2(property = "confirmation", script = "_this.password==_this.confirmation", lang = "javascript", alias = "_this", message = "{password.confirmation.error}")
+@PropertyScriptAssert(property = "confirmation", script = "_this.password==_this.confirmation", lang = "javascript", alias = "_this", message = "{password.confirmation.error}")
 public class User implements Serializable {
     //@AuthValidation.list({
     //        @AuthValidation(actionOfMenu="",actionType=""),
