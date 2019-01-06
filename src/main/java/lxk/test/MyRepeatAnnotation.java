@@ -10,7 +10,13 @@ import java.lang.annotation.*;
  */
 @Target(ElementType.TYPE) // 使用范围在类、接口和枚举
 @Retention(RetentionPolicy.RUNTIME) // 生命周期在运行时期，可以进行反射操作
-@Repeatable(MyRepeatAnnotationContainer.class) // 重复注解，需要指定注解容器
+@Repeatable(MyRepeatAnnotation.MyRepeatAnnotationContainer.class) // 重复注解，需要指定注解容器
 public @interface MyRepeatAnnotation {
     String value();// 定义一个属性值
+
+    @Target(ElementType.TYPE)
+    @Retention(RetentionPolicy.RUNTIME)
+    public  @interface MyRepeatAnnotationContainer {
+        MyRepeatAnnotation[] value();
+    }
 }

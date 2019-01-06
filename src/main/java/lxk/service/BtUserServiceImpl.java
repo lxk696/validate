@@ -3,7 +3,6 @@ package lxk.service;
 import lxk.model.BtUser;
 import lxk.model.User;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 
 import java.util.Date;
 
@@ -14,7 +13,6 @@ import java.util.Date;
  * @date 2018年12月06日
  */
 @Service
-@Validated
 public class BtUserServiceImpl implements BtUserService {
     @Override
     public BtUser insertAndReturn(BtUser user) {
@@ -24,5 +22,10 @@ public class BtUserServiceImpl implements BtUserService {
     @Override
     public User insertAndReturn(User user, String testEmail, Date testDate, Integer testRange) {
         return user;
+    }
+
+    @Override
+    public void changePassword(String password, String confirmation) {
+        System.out.println("test  CrossParameter the password and confirmation!");
     }
 }

@@ -38,8 +38,8 @@ import java.util.List;
 //        @CheckPassword()
 //})
 //@CheckPassword()
-//@ScriptAssert(script = "_this.pwd==_this.confirmation", lang = "javascript", alias = "_this", message = "{password.confirmation.error}")//TODO 这样全局异常捕获不到错误字段
-@PropertyScriptAssert(property = "confirmation", script = "_this.password==_this.confirmation", lang = "javascript", alias = "_this", message = "{password.confirmation.error}")
+//@ScriptAssert       (script = "_this.pwd==_this.confirmation", lang = "javascript", alias = "_this", message = "{password.confirmation.error}")//TODO 这样全局异常捕获不到错误字段
+@PropertyScriptAssert(script = "_this.pwd==_this.confirmation", lang = "javascript", alias = "_this", message = "{password.confirmation.error}",property = "confirmation")
 public class User implements Serializable {
     //@AuthValidation.list({
     //        @AuthValidation(actionOfMenu="",actionType=""),

@@ -3,7 +3,9 @@ package lxk.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import lombok.val;
-import lxk.model.*;
+import lxk.model.CreateGroup;
+import lxk.model.SequenceGroup;
+import lxk.model.User;
 import lxk.service.BtUserService;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,13 +41,16 @@ public class UserController {
     @RequestMapping("/add")
     public User addUser(@Validated({CreateGroup.class, SequenceGroup.class}) @RequestBody User user) throws ParseException {
     //public User addUser(@Validated({CreateGroup.class}) @RequestBody User user) throws ParseException {
+
+        btUserService.changePassword(user.getPwd(), "pwdpwd");
+
         String testEmail = "69671710@qq.com";
         Date testDate = new Date();
         Integer testRange = 10;
 
-        // String testEmail = "69671710";
-        // Date testDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2029-02-02 23:20:20");
-        // Integer testRange = 100;
+         //String testEmail = "69671710";
+         //Date testDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2029-02-02 23:20:20");
+         //Integer testRange = 100;
         return btUserService.insertAndReturn(user, testEmail, testDate, testRange);
     }
 
