@@ -2,6 +2,7 @@ package lxk.controller;
 
 
 import com.alibaba.fastjson.JSONObject;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import lxk.model.CreateGroup;
 import lxk.model.SequenceGroup;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.constraints.Pattern;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * @desc 用户管理控制器
@@ -25,10 +27,19 @@ import java.util.Date;
  */
 @RestController
 @RequestMapping("/user")
+@Slf4j
 public class UserController {
+
+    /**
+     * @Description: 测试spring 直接注入OnlineChannelBusiness 接口的所有实现类到 map->channels中。key为实现类id
+    */
+    @Autowired
+    protected Map<String,OnlineChannelBusiness> channels;
 
     @Autowired
     private BtUserService btUserService;
+
+
 
     /**@Validated({CreateGroup.class,SequenceGroup.class}
      *   校验顺序和  SequenceGroup  与 CreateGroup的顺序无关。
@@ -41,6 +52,8 @@ public class UserController {
     @RequestMapping("/add")
     public User addUser(@Validated({CreateGroup.class, SequenceGroup.class}) @RequestBody User user) throws ParseException {
     //public User addUser(@Validated({CreateGroup.class}) @RequestBody User user) throws ParseException {
+
+        log.info("-=---="+channels);
 
         btUserService.changePassword(user.getPwd(), "pwdpwd");
 
