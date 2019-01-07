@@ -18,15 +18,13 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import static org.hibernate.validator.internal.util.logging.Messages.MESSAGES;
 
 @Constraint(validatedBy = {CrossParameterScriptAssert.CrossParameterScriptAssertClassValidator.class,
-                CrossParameterScriptAssert.CrossParameterScriptAssertParameterValidator.class})
+                           CrossParameterScriptAssert.CrossParameterScriptAssertParameterValidator.class})
 @Target({TYPE, FIELD, PARAMETER, METHOD, CONSTRUCTOR, ANNOTATION_TYPE})
 @Retention(RUNTIME)
 @Documented
 public @interface CrossParameterScriptAssert {
 
-    String message()
-
-    default "error";
+    String message() default "error";
 
     Class<?>[] groups() default {};
 
@@ -36,18 +34,11 @@ public @interface CrossParameterScriptAssert {
 
     String lang();
 
-    String alias()
+    String alias() default "_this";
 
-    default "_this";
+    String property() default "";
 
-    String property()
-
-    default "";
-
-    ConstraintTarget validationAppliesTo()
-
-    default ConstraintTarget.IMPLICIT;
-
+    ConstraintTarget validationAppliesTo() default ConstraintTarget.IMPLICIT;
 
     @SupportedValidationTarget(ValidationTarget.PARAMETERS)
     class CrossParameterScriptAssertParameterValidator implements ConstraintValidator<CrossParameterScriptAssert, Object[]> {

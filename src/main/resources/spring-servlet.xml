@@ -138,6 +138,21 @@
     </bean>
 
 
+    <!--本地化-->
+    <!--本地化解析器-->
+    <bean id="localeResolver" class="org.springframework.web.servlet.i18n.CookieLocaleResolver">
+        <property name="cookieName" value="locale"/>
+        <property name="cookieMaxAge" value="-1"/>
+        <property name="defaultLocale" value="en_US"/>
+    </bean>
+    <!--设置本地化信息的拦截器-->
+    <mvc:interceptors>
+        <bean class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
+            <property name="paramName" value="language"/>
+        </bean>
+    </mvc:interceptors>
+
+
     <!--&lt;!&ndash; 校验错误信息配置文件 &ndash;&gt;-->
     <!--<bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">-->
         <!--&lt;!&ndash; 资源文件名 &ndash;&gt;-->

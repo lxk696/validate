@@ -4,12 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lxk.annotation.*;
 import lxk.handler.ErrorEmailSender;
 import lxk.handler.Severity;
-import lxk.annotation.AuthValidation;
-import lxk.annotation.ConsistentDateParameters;
-import lxk.annotation.Forbidden;
-import lxk.annotation.PropertyScriptAssert;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.Range;
@@ -39,7 +36,8 @@ import java.util.List;
 //})
 //@CheckPassword()
 //@ScriptAssert       (script = "_this.pwd==_this.confirmation", lang = "javascript", alias = "_this", message = "{password.confirmation.error}")//TODO 这样全局异常捕获不到错误字段
-@PropertyScriptAssert(script = "_this.pwd==_this.confirmation", lang = "javascript", alias = "_this", message = "{password.confirmation.error}",property = "confirmation")
+//@PropertyScriptAssert(script = "_this.pwd==_this.confirmation", lang = "javascript", alias = "_this", message = "{password.confirmation.error}",property = "confirmation")
+//@CrossParameterScriptAssert(script = "_this.password==_this.confirmation", lang = "javascript", alias = "_this", message = "userclass{password.confirmation.error2}",property = "confirmation")
 public class User implements Serializable {
     //@AuthValidation.list({
     //        @AuthValidation(actionOfMenu="",actionType=""),
@@ -99,7 +97,8 @@ public class User implements Serializable {
     /**
      * 电话
      */
-    @Pattern(regexp = "^1[3-9]\\d{9}$", message = "{custom.phone.invalid}", groups = CreateGroup.class)
+    //@Pattern(regexp = "^1[3-9]\\d{9}$", message = "{custom.phone.invalid}", groups = CreateGroup.class)
+    @Composition()
     private String phone;
 
 

@@ -1,8 +1,8 @@
 package lxk.service;
 
+import lxk.annotation.CrossParameterScriptAssert;
 import lxk.model.BtUser;
 import lxk.model.User;
-import lxk.annotation.CrossParameter;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.Range;
@@ -38,7 +38,8 @@ public interface BtUserService {
             @NotNull(message = "testRange为空") @Range(message = "testRange错误", min = 1, max = 10) Integer testRange);
 
 
-    @CrossParameter
+    //@CrossParameter
+    @CrossParameterScriptAssert(script = "args[0] == args[1]", lang = "javascript", alias = "args", message = "changePassword{password.confirmation.error2}")
     public void changePassword(String password, String confirmation);
 
 }
