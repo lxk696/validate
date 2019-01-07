@@ -1,14 +1,14 @@
-package lxk.test;
+package lxk.annotation;
 
 import org.hibernate.validator.internal.constraintvalidators.hv.ScriptAssertContext;
 import org.hibernate.validator.internal.util.Contracts;
 import org.hibernate.validator.internal.util.logging.Log;
 import org.hibernate.validator.internal.util.logging.LoggerFactory;
-import org.hibernate.validator.internal.util.scriptengine.ScriptEvaluator;
-import org.hibernate.validator.internal.util.scriptengine.ScriptEvaluatorFactory;
 
-import javax.script.ScriptException;
-import javax.validation.*;
+import javax.validation.Constraint;
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
+import javax.validation.Payload;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -77,14 +77,13 @@ public @interface PropertyScriptAssert {
         public boolean isValid(Object value, ConstraintValidatorContext constraintValidatorContext) {
 
             Object evaluationResult;
-            ScriptEvaluator scriptEvaluator;
-
-            try {
-                ScriptEvaluatorFactory evaluatorFactory = ScriptEvaluatorFactory.getInstance();
-                scriptEvaluator = evaluatorFactory.getScriptEvaluatorByLanguageName(languageName);
-            } catch (ScriptException e) {
-                throw new ConstraintDeclarationException(e);
-            }
+            //ScriptEvaluator scriptEvaluator;
+            //try {
+            //    ScriptEvaluatorFactory evaluatorFactory = ScriptEvaluatorFactory.getInstance();
+            //    scriptEvaluator = evaluatorFactory.getScriptEvaluatorByLanguageName(languageName);
+            //} catch (ScriptException e) {
+            //    throw new ConstraintDeclarationException(e);
+            //}
 
             try {
                 //evaluationResult = scriptEvaluator.evaluate(script, value, alias);

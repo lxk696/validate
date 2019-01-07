@@ -2,7 +2,7 @@ package lxk.service;
 
 import lxk.model.BtUser;
 import lxk.model.User;
-import lxk.test.CrossParameter;
+import lxk.annotation.CrossParameter;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.Range;

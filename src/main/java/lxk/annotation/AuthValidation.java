@@ -1,4 +1,4 @@
-package lxk.test;
+package lxk.annotation;
 
 import org.springframework.context.annotation.Scope;
 import java.lang.annotation.*;

@@ -1,4 +1,4 @@
-package lxk.test;
+package lxk.annotation;
 
 import lxk.model.User;
 import org.hibernate.validator.constraints.ScriptAssert;

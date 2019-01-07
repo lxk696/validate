@@ -1,4 +1,4 @@
-package lxk.test;
+package lxk.annotation;
 
 import org.hibernate.validator.internal.engine.constraintvalidation.ConstraintValidatorContextImpl;
 import org.springframework.util.StringUtils;

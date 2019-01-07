@@ -1,4 +1,4 @@
-package lxk.test;
+package lxk.annotation;
 
 import java.lang.annotation.*;
 

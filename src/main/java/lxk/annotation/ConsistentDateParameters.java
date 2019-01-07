@@ -1,6 +1,5 @@
-package lxk.test;
+package lxk.annotation;
 
-import lxk.model.EnumValueAnn;
 import javax.validation.Constraint;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
