@@ -9,9 +9,7 @@ import org.springframework.util.StringUtils;
 import javax.validation.*;
 import javax.validation.constraintvalidation.SupportedValidationTarget;
 import javax.validation.constraintvalidation.ValidationTarget;
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
@@ -21,7 +19,8 @@ import static org.hibernate.validator.internal.util.logging.Messages.MESSAGES;
                            CrossParameterScriptAssert.CrossParameterScriptAssertParameterValidator.class})
 @Target({TYPE, FIELD, PARAMETER, METHOD, CONSTRUCTOR, ANNOTATION_TYPE})
 @Retention(RUNTIME)
-@Documented
+// @Documented//TODO  与 重复注解 冲突
+@Repeatable(CrossParameterScriptAssert.List.class) // 重复注解，需要指定注解容器
 public @interface CrossParameterScriptAssert {
 
     String message() default "error";
@@ -39,6 +38,12 @@ public @interface CrossParameterScriptAssert {
     String property() default "";
 
     ConstraintTarget validationAppliesTo() default ConstraintTarget.IMPLICIT;
+
+    @Target({TYPE, FIELD, PARAMETER, METHOD, CONSTRUCTOR, ANNOTATION_TYPE})
+    @Retention(RetentionPolicy.RUNTIME)
+    public @interface List {
+        CrossParameterScriptAssert[] value();
+    }
 
     @SupportedValidationTarget(ValidationTarget.PARAMETERS)
     class CrossParameterScriptAssertParameterValidator implements ConstraintValidator<CrossParameterScriptAssert, Object[]> {

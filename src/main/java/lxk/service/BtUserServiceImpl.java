@@ -1,5 +1,6 @@
 package lxk.service;
 
+import lombok.extern.slf4j.Slf4j;
 import lxk.model.BtUser;
 import lxk.model.User;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import java.util.Date;
  * @date 2018年12月06日
  */
 @Service
+@Slf4j
 public class BtUserServiceImpl implements BtUserService {
     @Override
     public BtUser insertAndReturn(BtUser user) {
@@ -26,6 +28,6 @@ public class BtUserServiceImpl implements BtUserService {
 
     @Override
     public void changePassword(String password, String confirmation) {
-        System.out.println("test  CrossParameter the password and confirmation!");
+        log.info("test  CrossParameter the password and confirmation!");
     }
 }

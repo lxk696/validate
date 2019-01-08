@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.constraints.Pattern;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -37,6 +38,9 @@ public class UserController {
     protected Map<String,OnlineChannelBusiness> channels;
 
     @Autowired
+    protected List<OnlineChannelBusiness> channels2;
+
+    @Autowired
     private BtUserService btUserService;
 
 
@@ -54,7 +58,7 @@ public class UserController {
     //public User addUser(@Validated({CreateGroup.class}) @RequestBody User user) throws ParseException {
 
         log.info("-=---="+channels);
-
+        log.info("-=---="+channels2);
         btUserService.changePassword(user.getPwd(), "pwdpwd");
 
         String testEmail = "69671710@qq.com";

@@ -37,8 +37,22 @@ import java.util.List;
 //@CheckPassword()
 //@ScriptAssert       (script = "_this.pwd==_this.confirmation", lang = "javascript", alias = "_this", message = "{password.confirmation.error}")//TODO 这样全局异常捕获不到错误字段
 //@PropertyScriptAssert(script = "_this.pwd==_this.confirmation", lang = "javascript", alias = "_this", message = "{password.confirmation.error}",property = "confirmation")
-//@CrossParameterScriptAssert(script = "_this.password==_this.confirmation", lang = "javascript", alias = "_this", message = "userclass{password.confirmation.error2}",property = "confirmation")
+// @ScriptAssert(lang = "javascript", script = "com.learn.validate.domain.Student.checkParams(_this.name,_this.age,_this.classes)", message = "have error msg: StudentScriptAssert is wrong")
+// @ScriptAssert(lang = "javascript", script = "_this.startDate.before(_this.endDate)") //TODO lang = "javascript"
+// @ScriptAssert(lang = "jexl", script = "_.startDate > _.endDate", alias = "_") //TODO lang = "jexl"
+@CrossParameterScriptAssert(script = "_this.pwd==_this.confirmation", lang = "javascript", alias = "_this", message = "userclass{password.confirmation.error2}",property = "confirmation")
+@CrossParameterScriptAssert(script = "_this.pwd==\"pwdpwd\"", lang = "javascript", alias = "_this", message = "userclass222{password.confirmation.error2}",property = "confirmation")
+@CrossParameterScriptAssert(script = "/eh/.test(\"The best things in life are free!\")", lang = "javascript", alias = "_this", message = "test java script pattern have eeee!!",property = "confirmation")
 public class User implements Serializable {
+
+    // @ScriptAssert(lang = "javascript", script = "_this.startDate.before(_this.endDate)") //TODO lang = "javascript"
+    // @ScriptAssert(lang = "jexl", script = "_.startDate > _.endDate", alias = "_") //TODO lang = "jexl"
+    // public class CalendarEvent {
+  	//     private Date startDate;
+    //  	private Date endDate;
+    //     //..............
+    //  }
+
     //@AuthValidation.list({
     //        @AuthValidation(actionOfMenu="",actionType=""),
     //        @AuthValidation(actionOfMenu="",actionType="")
