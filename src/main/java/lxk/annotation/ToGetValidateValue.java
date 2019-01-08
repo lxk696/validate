@@ -489,7 +489,7 @@
 //        return this.compositionType;
 //    }
 //
-//    public static enum ConstraintType {
+//    public static BtUser ConstraintType {
 //        GENERIC,
 //        CROSS_PARAMETER;
 //
