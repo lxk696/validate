@@ -22,6 +22,8 @@ public class AliPayChannel implements OnlineChannelBusiness  {
      */
     @Override
     public boolean needRedirect() {
+
+        ClassLoader systemClassLoader = ClassLoader.getSystemClassLoader();
         return false;
     }
 

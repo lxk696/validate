@@ -26,6 +26,7 @@ import org.springframework.web.util.NestedServletException;
 import org.springframework.web.util.WebUtils;
 
 import javax.servlet.*;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -440,7 +441,7 @@ public class DispatcherServlet extends FrameworkServlet {
 	}
 
 
-	/**
+	/** TODO 什么时候刷新的
 	 * This implementation calls {@link #initStrategies}.
 	 */
 	@Override
@@ -482,20 +483,20 @@ public class DispatcherServlet extends FrameworkServlet {
         super.service(request, response);
     }
 
-    /**
+    /**  FIXME 初始化此servlet使用的策略对象。可以在子类中重写以初始化其他策略对象。
 	 * Initialize the strategy objects that this servlet uses.
 	 * <p>May be overridden in subclasses in order to initialize further strategy objects.
 	 */
 	protected void initStrategies(ApplicationContext context) {
-		initMultipartResolver(context);
-		initLocaleResolver(context);
-		initThemeResolver(context);
-		initHandlerMappings(context);
-		initHandlerAdapters(context);
-		initHandlerExceptionResolvers(context);
-		initRequestToViewNameTranslator(context);
-		initViewResolvers(context);
-		initFlashMapManager(context);
+		initMultipartResolver(context);//TODO
+		initLocaleResolver(context);//TODO
+		initThemeResolver(context);//TODO
+		initHandlerMappings(context);//TODO
+		initHandlerAdapters(context);//TODO
+		initHandlerExceptionResolvers(context);//TODO 加载异常处理器？
+		initRequestToViewNameTranslator(context);//TODO
+		initViewResolvers(context);//TODO
+		initFlashMapManager(context);//TODO
 	}
 
 	/**
@@ -640,7 +641,30 @@ public class DispatcherServlet extends FrameworkServlet {
 		}
 	}
 
-	/**
+    /**
+     * Set whether this servlet should dispatch an HTTP OPTIONS request to
+     * the {@link #doService} method.
+     * <p>Default in the {@code FrameworkServlet} is "false", applying
+     * {@link HttpServlet}'s default behavior (i.e.enumerating
+     * all standard HTTP request methods as a response to the OPTIONS request).
+     * Note however that as of 4.3 the {@code DispatcherServlet} sets this
+     * property to "true" by default due to its built-in support for OPTIONS.
+     * <p>Turn this flag on if you prefer OPTIONS requests to go through the
+     * regular dispatching chain, just like other HTTP requests. This usually
+     * means that your controllers will receive those requests; make sure
+     * that those endpoints are actually able to handle an OPTIONS request.
+     * <p>Note that HttpServlet's default OPTIONS processing will be applied
+     * in any case if your controllers happen to not set the 'Allow' header
+     * (as required for an OPTIONS response).
+     *
+     * @param dispatchOptionsRequest
+     */
+    @Override
+    public void setDispatchOptionsRequest(boolean dispatchOptionsRequest) {
+        super.setDispatchOptionsRequest(dispatchOptionsRequest);
+    }
+
+    /**
 	 * Initialize the HandlerExceptionResolver used by this class.
 	 * <p>If no bean is defined with the given name in the BeanFactory for this namespace,
 	 * we default to no exception resolver.
@@ -650,6 +674,7 @@ public class DispatcherServlet extends FrameworkServlet {
 
 		if (this.detectAllHandlerExceptionResolvers) {
 			// Find all HandlerExceptionResolvers in the ApplicationContext, including ancestor contexts.
+            // TODO 从spring mvc的容器中获取类型为HandlerExceptionResolver的bean
 			Map<String, HandlerExceptionResolver> matchingBeans = BeanFactoryUtils
 					.beansOfTypeIncludingAncestors(context, HandlerExceptionResolver.class, true, false);
 			if (!matchingBeans.isEmpty()) {
@@ -860,9 +885,9 @@ public class DispatcherServlet extends FrameworkServlet {
 	}
 
 
-	/**
-	 * Exposes the DispatcherServlet-specific request attributes and delegates to {@link #doDispatch}
-	 * for the actual dispatching.
+	/**  TODO  tomcat怎么调用到 FrameworkServlet doService的方法的。怎么在tomcat下实现自己的web框架
+	 * Exposes the DispatcherServlet-specific request attributes and delegates to {@link #doDispatch}for the actual dispatching.
+	 * 将DispatcherServlet特定的请求属性和委托公开给{@link #doDispatch}以进行实际调度。
 	 */
 	@Override
 	protected void doService(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -900,6 +925,7 @@ public class DispatcherServlet extends FrameworkServlet {
 		request.setAttribute(FLASH_MAP_MANAGER_ATTRIBUTE, this.flashMapManager);
 
 		try {
+            // TODO  上面做了一系列的操作是想获取必要的资源，在这里分发了请求
 			doDispatch(request, response);
 		}
 		finally {
@@ -912,7 +938,33 @@ public class DispatcherServlet extends FrameworkServlet {
 		}
 	}
 
+
 	/**
+     * 1 向服务器发送HTTP请求，请求被前端控制器 DispatcherServlet 捕获。
+     * 2 DispatcherServlet 根据 <servlet-name>-servlet.xml 中的配置对请求的URL进行解析，得到请求资源标识符（URI）。 然后根据该URI，调用 HandlerMapping 获得该Handler配置的所有相关的对象（包括Handler对象以及Handler对象对应的拦截器），最后以 HandlerExecutionChain 对象的形式返回。
+     * 3 DispatcherServlet 根据获得的Handler，选择一个合适的 HandlerAdapter。（附注：如果成功获得HandlerAdapter后，此时将开始执行拦截器的preHandler(…​)方法）。
+     * 4 提取Request中的模型数据，填充Handler入参，开始执行Handler（Controller)。 在填充Handler的入参过程中，根据你的配置，Spring将帮你做一些额外的工作：
+     *  TODO   HttpMessageConveter： 将请求消息（如Json、xml等数据）转换成一个对象，将对象转换为指定的响应信息。
+     *         数据转换：对请求消息进行数据转换。如String转换成Integer、Double等。
+     *         数据根式化：对请求消息进行数据格式化。 如将字符串转换成格式化数字或格式化日期等。
+     *         数据验证： 验证数据的有效性（长度、格式等），验证结果存储到BindingResult或Error中。
+     *          Handler(Controller)执行完成后，向 DispatcherServlet 返回一个 ModelAndView 对象；
+     * 5 根据返回的ModelAndView，选择一个适合的 ViewResolver（必须是已经注册到Spring容器中的ViewResolver)返回给DispatcherServlet。
+     * 6 ViewResolver 结合Model和View，来渲染视图。
+     * 7 视图负责将渲染结果返回给客户端。
+     *
+     *
+     *
+     *
+     * FIXME
+     *  TODO  stringMsg 等等增强器是在哪一步加入的。
+     *  TODO  继承的framework作用。
+     *  TODO  xml配置和注解怎么同时生效的。
+     *  TODO  自定义增强。
+     *  TODO  doDispatch return 空了，上一步是怎么处理 response 的
+     *  TODO  适配器设计模式
+     *
+     *
 	 * Process the actual dispatching to the handler.
 	 * <p>The handler will be obtained by applying the servlet's HandlerMappings in order.
 	 * The HandlerAdapter will be obtained by querying the servlet's installed HandlerAdapters
@@ -923,12 +975,14 @@ public class DispatcherServlet extends FrameworkServlet {
 	 * @param response current HTTP response
 	 * @throws Exception in case of any kind of processing failure
 	 */
+    // 前端控制器的分派方法
 	protected void doDispatch(HttpServletRequest request, HttpServletResponse response) throws Exception {
         logger.error("!!!doDispatch    lxk x lxk x lxk  doDispatch!!");
 		HttpServletRequest processedRequest = request;
 		HandlerExecutionChain mappedHandler = null;
 		boolean multipartRequestParsed = false;
 
+        // TODO
 		WebAsyncManager asyncManager = WebAsyncUtils.getAsyncManager(request);
 
 		try {
@@ -936,20 +990,25 @@ public class DispatcherServlet extends FrameworkServlet {
 			Exception dispatchException = null;
 
 			try {
+                // TODO
+			    //检查是否是请求multipart如文件上传，如果是将通过multipartResolver解析
 				processedRequest = checkMultipart(request);
 				multipartRequestParsed = (processedRequest != request);
 
-				// Determine handler for the current request.
+				// Determine handler for the current request.确定当前请求的处理程序
+                //步骤2,请求到处理器(页面控制器)的映射，通过HanMapping进行映射
 				mappedHandler = getHandler(processedRequest);
 				if (mappedHandler == null || mappedHandler.getHandler() == null) {
 					noHandlerFound(processedRequest, response);
 					return;
 				}
 
-				// Determine handler adapter for the current request.
+				// Determine handler adapter for the current request.确定当前请求的处理程序适配器。
+                //步骤3,处理适配，即交我们的处理器包装成相应的适配器
 				HandlerAdapter ha = getHandlerAdapter(mappedHandler.getHandler());
 
-				// Process last-modified header, if supported by the handler.
+				// Process last-modified header, if supported by the handler.处理最后修改的标头，如果处理程序支持
+                // 304   Not Modified缓存支持
 				String method = request.getMethod();
 				boolean isGet = "GET".equals(method);
 				if (isGet || "HEAD".equals(method)) {
@@ -961,29 +1020,39 @@ public class DispatcherServlet extends FrameworkServlet {
 						return;
 					}
 				}
-
+               // 执行处理器相关的拦截器的预处理（HandlerInterceptor.preHandle），里面如果返回false也会处理afterCompletion
 				if (!mappedHandler.applyPreHandle(processedRequest, response)) {
 					return;
 				}
 
-				// Actually invoke the handler.
+				// Actually invoke the handler.实际上调用处理程序 . 在此处真实的调用了我们的Controller
+                // 步骤4、由适配器执行处理器（调用处理器相应功能处理方法）
+                //ModelAndView的逻辑视图名——> ViewResolver， ViewResolver将把逻辑视图名解析为具体的View，通过这种策略模式，很容易更换其他视图技术；
+                //View——>渲染，View会根据传进来的Model模型数据进行渲染，此处的Model实际是一个Map数据结构，因此很容易支持其他视图技术；
 				mv = ha.handle(processedRequest, response, mappedHandler.getHandler());
 
+				// TODO
 				if (asyncManager.isConcurrentHandlingStarted()) {
 					return;
 				}
-
+                // TODO
 				applyDefaultViewName(processedRequest, mv);
+                // 执行处理器相关的拦截器的后处理（HandlerInterceptor.postHandle）
 				mappedHandler.applyPostHandle(processedRequest, response, mv);
 			}
-			catch (Exception ex) {
+			catch (Exception ex) {//当出现错误的时候，捕捉到请求在下面的processDispatchResult处理异常信息  留着processDispatchResult后面处理
 				dispatchException = ex;
 			}
 			catch (Throwable err) {
 				// As of 4.3, we're processing Errors thrown from handler methods as well,
 				// making them available for @ExceptionHandler methods and other scenarios.
-				dispatchException = new NestedServletException("Handler dispatch failed", err);
+                // TODO 从这里进入全局异常处理器？
+                //从4.3开始，我们还处理从处理程序方法抛出的错误
+                // 使它们可用于@ExceptionHandler方法和其他方案
+				dispatchException = new NestedServletException("Handler dispatch failed", err);//留着processDispatchResult后面处理
 			}
+            //TODO
+            // 执行处理器相关的拦截器afterCompletion （HandlerInterceptor.afterCompletion）和其他 // 处理异常信息
 			processDispatchResult(processedRequest, response, mappedHandler, mv, dispatchException);
 		}
 		catch (Exception ex) {
@@ -1001,11 +1070,12 @@ public class DispatcherServlet extends FrameworkServlet {
 				}
 			}
 			else {
-				// Clean up any resources used by a multipart request.
+				// Clean up any resources used by a multipart request. 清理多部分请求使用的所有资源。
 				if (multipartRequestParsed) {
 					cleanupMultipart(processedRequest);
 				}
 			}
+            //TODO 返回控制权给DispatcherServlet，由DispatcherServlet返回响应给用户，到此一个流程结束。
 		}
 	}
 
@@ -1018,7 +1088,7 @@ public class DispatcherServlet extends FrameworkServlet {
 		}
 	}
 
-	/**
+	/** TODO (这里可以处理404页面？) 处理处理程序选择和处理程序调用的结果，它可以是ModelAndView或要解析为ModelAndView的Exception
 	 * Handle the result of handler selection and handler invocation, which is
 	 * either a ModelAndView or an Exception to be resolved to a ModelAndView.
 	 */
@@ -1032,14 +1102,17 @@ public class DispatcherServlet extends FrameworkServlet {
 				logger.debug("ModelAndViewDefiningException encountered", exception);
 				mv = ((ModelAndViewDefiningException) exception).getModelAndView();
 			}
-			else {
+			else {//TODO 此处处理真正的异常
 				Object handler = (mappedHandler != null ? mappedHandler.getHandler() : null);
-				mv = processHandlerException(request, response, handler, exception);
+				mv = processHandlerException(request, response, handler, exception);  // TODO 从这里进入全局异常处理器？
 				errorView = (mv != null);
 			}
 		}
 
-		// Did the handler return a view to render?
+		// Did the handler return a view to render?  处理程序是否返回要渲染的视图
+        //步骤5 步骤6、解析视图并进行视图的渲染
+        //步骤5  由ViewResolver解析View（viewResolver.resolveViewName(viewName, locale)）
+        //步骤6  视图在渲染时会把Model传入（view.render(mv.getModelInternal(), request, response);）
 		if (mv != null && !mv.wasCleared()) {
 			render(mv, request, response);
 			if (errorView) {
@@ -1054,10 +1127,10 @@ public class DispatcherServlet extends FrameworkServlet {
 		}
 
 		if (WebAsyncUtils.getAsyncManager(request).isConcurrentHandlingStarted()) {
-			// Concurrent handling started during a forward
+			//FIXME  Concurrent handling started during a forward 并行处理在前进期间开始
 			return;
 		}
-
+        // 执行处理器相关的拦截器的完成后处理（HandlerInterceptor.afterCompletion）
 		if (mappedHandler != null) {
 			mappedHandler.triggerAfterCompletion(request, response, null);
 		}
@@ -1182,7 +1255,13 @@ public class DispatcherServlet extends FrameworkServlet {
 	}
 
 	/**
-	 * Determine an error ModelAndView via the registered HandlerExceptionResolvers.
+     *  TODO     由上面可知：spring mvc 从容器中获取了处理异常的HandlerExceptionResolver，
+     *          spring mvc提供三种异常处理器：
+     *          DefaultHandlerExceptionResolver， ResponseStatusExceptionResolver， ExceptionHandlerExceptionResolver，
+     *          用户可以在spring mvc  的配置文件中配置自己的异常处理类：
+     *          为了统一异常处理，我们可以自定义一个HandlerExceptionResolver，所有的异常均由自定义的异常处理， 由此我们可以重写DispatcherServlet类的
+     *           processHandlerException（）方法;
+	 * Determine an error ModelAndView via the registered HandlerExceptionResolvers.   通过注册的HandlerExceptionResolvers确定错误ModelAndView。
 	 * @param request current HTTP request
 	 * @param response current HTTP response
 	 * @param handler the executed handler, or {@code null} if none chosen at the time of the exception
@@ -1194,8 +1273,11 @@ public class DispatcherServlet extends FrameworkServlet {
 	protected ModelAndView processHandlerException(HttpServletRequest request, HttpServletResponse response,
 			Object handler, Exception ex) throws Exception {
 
-		// Check registered HandlerExceptionResolvers...
+		// Check registered HandlerExceptionResolvers...检查已注册的HandlerExceptionResolvers .
 		ModelAndView exMv = null;
+        // 遍历HandlerExceptionResolver，获取合适来处理异常
+        //TODO  spring mvc 在Dispatcher里容器 onRefresh()方法的时候加载了HandlerExceptionResolver：
+
 		for (HandlerExceptionResolver handlerExceptionResolver : this.handlerExceptionResolvers) {
 			exMv = handlerExceptionResolver.resolveException(request, response, handler, ex);
 			if (exMv != null) {
