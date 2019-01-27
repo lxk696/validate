@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.annotation.Resource;
 import javax.validation.Valid;
 
 /**
@@ -25,7 +24,7 @@ import javax.validation.Valid;
 @Slf4j
 public class BookValidateController {
 
-    @Resource
+    //@Resource
     private BookService bookService;
 
 
