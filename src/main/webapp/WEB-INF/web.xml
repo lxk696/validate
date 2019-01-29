@@ -7,10 +7,22 @@
 
     <display-name>Archetype Created Web Application</display-name>
 
-    <!--<context-param> &lt;!&ndash;全局范围内环境参数初始化&ndash;&gt;-->
-        <!--<param-name>contextConfigLocation</param-name>          &lt;!&ndash;参数名称&ndash;&gt;-->
-        <!--<param-value>classpath:spring-core.xml</param-value>     &lt;!&ndash;参数取值&ndash;&gt;-->
-    <!--</context-param>-->
+    <filter>
+        <filter-name>crossFilter</filter-name>
+        <filter-class>lxk.framework.CrossFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>crossFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+
+
+
+    <context-param> <!--全局范围内环境参数初始化-->
+        <param-name>contextConfigLocation</param-name>          <!--参数名称-->
+        <param-value>classpath:spring-core.xml</param-value>     <!--参数取值-->
+    </context-param>
 
     <!--以下配置的加载顺序:先 ServletContext >> context-param >> listener >> filter >> servlet >>  spring-->
 
@@ -33,16 +45,16 @@
 
     <!-- -监听器配置 -->
     <!--例:spring监听器-->
-    <!--<listener>        &lt;!&ndash;用来设定Listener接口&ndash;&gt;-->
-        <!--<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>&lt;!&ndash;定义Listener的类名称&ndash;&gt;-->
-    <!--</listener>-->
+    <listener>        <!--用来设定Listener接口-->
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class><!--定义Listener的类名称-->
+    </listener>
 
 
 
     <!-- 防止Spring内存溢出监听器  -->
-    <!--<listener>-->
-        <!--<listener-class>org.springframework.web.util.IntrospectorCleanupListener</listener-class>-->
-    <!--</listener>-->
+    <listener>
+        <listener-class>org.springframework.web.util.IntrospectorCleanupListener</listener-class>
+    </listener>
 
     <!--servlet配置 -->
     <servlet>     <!--用来声明一个servlet的数据 -->
